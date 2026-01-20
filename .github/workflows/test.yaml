@@ -2,45 +2,40 @@ on:
   push:
     paths:
       - '**/*.py'
-      - '**/*.pyi'
       - 'pyproject.toml'
-      - 'mypy.ini'
       - 'setup.cfg'
       - 'setup.py'
-      - 'requirements*.txt'
-      - 'tox.ini'
-      - 'poetry.lock'
       - '.pre-commit-config.yaml'
       - 'tests/**'
-      - 'pytest.ini'
       - '.github/workflows/test.yaml'
   pull_request:
     paths:
       - '**/*.py'
-      - '**/*.pyi'
       - 'pyproject.toml'
-      - 'mypy.ini'
       - 'setup.cfg'
       - 'setup.py'
-      - 'requirements*.txt'
-      - 'tox.ini'
-      - 'poetry.lock'
       - '.pre-commit-config.yaml'
       - 'tests/**'
-      - 'pytest.ini'
       - '.github/workflows/test.yaml'
 
 name: Test
+
+concurrency:
+  # Cancel older, in-progress jobs from the same PR, same workflow.
+  # use run_id if the job is triggered by a push to ensure
+  # push-triggered jobs to not get canceled.
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
     linting:
         runs-on: ubuntu-latest
 
         steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v3
 
         - name: Setup Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v4
           with:
               python-version: "3.10"
 
@@ -57,6 +52,9 @@ jobs:
 
         - name: Run flake8
           run: flake8 .
+
+        - name: Run mdformat
+          run: mdformat . --check
 
     type-check:
         runs-on: ubuntu-latest
@@ -83,13 +81,13 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest]   # eventually add `windows-latest`
-                python-version: [3.9, "3.10", "3.11", "3.12"]
+                python-version: [3.8, 3.9, "3.10", "3.11"]
 
         steps:
-        - uses: actions/checkout@v4
+        - uses: actions/checkout@v3
 
         - name: Setup Python
-          uses: actions/setup-python@v5
+          uses: actions/setup-python@v4
           with:
               python-version: ${{ matrix.python-version }}
 
@@ -109,10 +107,10 @@ jobs:
 #            fail-fast: true
 #
 #        steps:
-#        - uses: actions/checkout@v4
+#        - uses: actions/checkout@v3
 #
 #        - name: Setup Python
-#          uses: actions/setup-python@v5
+#          uses: actions/setup-python@v4
 #          with:
 #              python-version: "3.10"
 #

@@ -124,4 +124,4 @@ version.py
 *.swp
 *.swo
 
-.worktrees
+.worktrees/

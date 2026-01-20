@@ -14,3 +14,5 @@ All agents must follow these rules:
 8) All mypy configuration (flags, overrides, per-module ignores, and file targets) should go in pyproject.toml. Do not split config across CLI args, mypy.ini, setup.cfg, or workflow steps.
 9) Centralize pytest settings (flags, markers, ignore patterns, and targets) in pyproject.toml, pytest.ini, setup.cfg, or tox.ini; workflows/hooks should call pytest without inline args.
 10) For unittest workflows, prefer python -m unittest without inline args; if discovery arguments are required, centralize them in a single script and call that from CI.
+
+Reference: https://www.conventionalcommits.org/en/v1.0.0/
